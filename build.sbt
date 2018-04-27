@@ -5,6 +5,7 @@ lazy val webpackProdConf = Def.setting { Some(webpackDir.value / "webpack-prod.c
 lazy val demo = project.in(file("."))
   .settings(
     scalaVersion := "2.12.5",
+    scalacOptions += "-P:scalajs:sjsDefinedByDefault",
 
     useYarn := true,
     version in webpack := "3.5.5",
@@ -17,7 +18,7 @@ lazy val demo = project.in(file("."))
     webpackBundlingMode in fastOptJS := BundlingMode.LibraryOnly(),
     webpackBundlingMode in fullOptJS := BundlingMode.Application,
     npmDependencies in Compile ++= Seq(
-      "speak.js" -> "git://github.com/kripken/speak.js.git#9c6f642f7d78bab51d16b2e8b79cdf205643ec35"
+      "mespeak" -> "2.0.2"
     ),
     npmDevDependencies in Compile ++= Seq(
       "compression-webpack-plugin" -> "1.0.0",

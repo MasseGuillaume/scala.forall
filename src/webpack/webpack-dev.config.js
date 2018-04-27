@@ -39,8 +39,7 @@ const Web = Merge(Common.Web, {
     contentBase: [
       devDir,
       __dirname,
-      Common.rootDir,
-      "node_modules/speak.js/"
+      Common.rootDir
     ]
   },
   plugins: [

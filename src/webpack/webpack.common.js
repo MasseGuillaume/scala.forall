@@ -4,16 +4,7 @@ const Merge = require("webpack-merge");
 const generatedConfig = require('./scalajs.webpack.config');
 
 const rootDir = Path.resolve(__dirname, '../../../..');
-console.log("***")
-console.log(rootDir);
-console.log("***")
-console.log("***")
 const resourcesDir = Path.resolve(rootDir, 'src/main/resources');
-console.log("***")
-console.log("***")
-console.log(resourcesDir);
-console.log("***")
-console.log("***")
 
 const ScalaJs = Merge(generatedConfig, {
   resolve: {
