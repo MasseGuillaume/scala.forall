@@ -48,3 +48,7 @@ trait Editor extends js.Object {
 @JSImport("codemirror/mode/clike/clike", JSImport.Namespace)
 @js.native
 object CLike extends js.Object
+
+@JSImport("codemirror/keymap/sublime", JSImport.Namespace)
+@js.native
+object Sublime extends js.Object

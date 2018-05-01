@@ -12,6 +12,7 @@ object Main {
     // speak("Hello, World")
 
     codemirror.CLike
+    codemirror.Sublime
 
     val code = 
       """|val xs = List(1, 2, 3)
@@ -21,7 +22,8 @@ object Main {
     val options = js.Dictionary[Any](
       "autofocus" -> true,
       "mode" -> "text/x-scala",
-      "theme" -> "solarized dark"
+      "theme" -> "solarized dark",
+      "keyMap" -> "sublime"
     ).asInstanceOf[codemirror.Options]
 
     val textArea = document.createElement("textarea").asInstanceOf[HTMLTextAreaElement]
