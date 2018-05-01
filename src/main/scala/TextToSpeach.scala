@@ -1,5 +1,3 @@
-package espeak
-
 import scala.scalajs.js
 import scala.scalajs.js.{UndefOr, |}
 import scala.scalajs.js.annotation._
@@ -57,12 +55,3 @@ trait SpeakOptions extends js.Object {
   val log: UndefOr[Boolean]
 }
 
-object Main {
-  def main(args: Array[String]): Unit = {
-    import Mespeak._
-    loadConfig(MespeakConfig)
-    loadVoice(`en/en-us`)
-    speak("Hello, World")
-
-  }
-}
