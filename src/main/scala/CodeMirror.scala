@@ -1,7 +1,6 @@
 package codemirror
 
-import org.scalajs.dom.raw.{Event, Element, HTMLElement, HTMLTextAreaElement}
-
+import org.scalajs.dom.raw.{Event, Element, HTMLElement, HTMLTextAreaElement, KeyboardEvent}
 import scala.scalajs.js
 import js.annotation._
 import js.{Dictionary, RegExp, UndefOr, |}
@@ -10,6 +9,7 @@ import js.{Dictionary, RegExp, UndefOr, |}
 @JSImport("codemirror", JSImport.Namespace)
 object CodeMirror extends js.Object {
   def fromTextArea(textarea: HTMLTextAreaElement, options: Options): TextAreaEditor = js.native
+  var commands: js.Dynamic = js.native
 }
 
 @js.native
@@ -43,6 +43,14 @@ trait Options extends js.Object {
 
 trait Editor extends js.Object {
   def getDoc(): Document
+  protected[codemirror] def on(t: String, f: js.Function): Unit
+  
+}
+
+object EditorExtensions {
+  implicit class EditorEventHandler(val editor: Editor) extends AnyVal {
+    def onKeyDown(f: (Editor, KeyboardEvent) => Unit): Unit = editor.on("keydown", f)
+  }
 }
 
 @JSImport("codemirror/mode/clike/clike", JSImport.Namespace)

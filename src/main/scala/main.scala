@@ -2,6 +2,7 @@ import org.scalajs.dom.raw.HTMLTextAreaElement
 import scala.scalajs.js
 
 import org.scalajs.dom.document
+import org.scalajs.dom.console
 
 
 object Main {
@@ -13,6 +14,7 @@ object Main {
 
     codemirror.CLike
     codemirror.Sublime
+    import codemirror.EditorExtensions._
 
     val code = 
       """|val xs = List(1, 2, 3)
@@ -22,7 +24,7 @@ object Main {
     val options = js.Dictionary[Any](
       "autofocus" -> true,
       "mode" -> "text/x-scala",
-      "theme" -> "solarized dark",
+      "theme" -> "solarized light",
       "keyMap" -> "sublime"
     ).asInstanceOf[codemirror.Options]
 
@@ -34,6 +36,11 @@ object Main {
         textArea,
         options
       )
+
+    editor.onKeyDown((editor, keyEvent) => {
+      console.log(keyEvent)
+      keyEvent.preventDefault()
+    })
 
     editor.getDoc().setValue(code)
   }

@@ -17,7 +17,10 @@ lazy val demo = project.in(file("."))
     webpackResources := webpackDir.value * "*.js",
     webpackBundlingMode in fastOptJS := BundlingMode.LibraryOnly(),
     webpackBundlingMode in fullOptJS := BundlingMode.Application,
-    libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "0.9.5",
+    libraryDependencies ++= Seq(
+      "org.scala-js" %%% "scalajs-dom" % "0.9.5",
+      "org.scalameta" %%% "scalameta" % "3.7.4"
+    ),
     npmDependencies in Compile ++= Seq(
       "codemirror" -> "5.37.0",
       "firacode" -> "1.205.0",
