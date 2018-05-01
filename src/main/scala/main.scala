@@ -13,16 +13,26 @@ object Main {
 
     codemirror.CLike
 
+    val code = 
+      """|val xs = List(1, 2, 3)
+         |xs.reverse
+         |""".stripMargin
+
     val options = js.Dictionary[Any](
-      "mode" -> "text/x-scala"
+      "autofocus" -> true,
+      "mode" -> "text/x-scala",
+      "theme" -> "solarized dark"
     ).asInstanceOf[codemirror.Options]
 
     val textArea = document.createElement("textarea").asInstanceOf[HTMLTextAreaElement]
     document.body.appendChild(textArea)
 
-    codemirror.CodeMirror.fromTextArea(
-      textArea,
-      options
-    )
+    val editor = 
+      codemirror.CodeMirror.fromTextArea(
+        textArea,
+        options
+      )
+
+    editor.getDoc().setValue(code)
   }
 }

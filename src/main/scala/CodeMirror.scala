@@ -12,6 +12,12 @@ object CodeMirror extends js.Object {
   def fromTextArea(textarea: HTMLTextAreaElement, options: Options): TextAreaEditor = js.native
 }
 
+@js.native
+@JSGlobal("Doc")
+class Document protected () extends js.Object {
+  def setValue(content: String): Unit = js.native
+}
+
 trait TextAreaEditor extends Editor {
   def save(): Unit
   def toTextArea(): Unit
@@ -32,9 +38,12 @@ trait Options extends js.Object {
   val tabindex: UndefOr[Int]
   val tabSize: UndefOr[Int]
   val theme: UndefOr[String]
+  val value: UndefOr[String]
 }
 
-trait Editor extends js.Object
+trait Editor extends js.Object {
+  def getDoc(): Document
+}
 
 @JSImport("codemirror/mode/clike/clike", JSImport.Namespace)
 @js.native
