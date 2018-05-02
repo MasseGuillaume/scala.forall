@@ -8,6 +8,7 @@ import js.{Dictionary, RegExp, UndefOr, |}
 @js.native
 @JSImport("codemirror", JSImport.Namespace)
 object CodeMirror extends js.Object {
+  var keyMap: KeyMaps = js.native
   def fromTextArea(textarea: HTMLTextAreaElement, options: Options): TextAreaEditor = js.native
   var commands: js.Dynamic = js.native
 }
@@ -16,6 +17,10 @@ object CodeMirror extends js.Object {
 @JSGlobal("Doc")
 class Document protected () extends js.Object {
   def setValue(content: String): Unit = js.native
+}
+
+trait KeyMaps extends js.Object {
+  val sublime: js.Dictionary[String]
 }
 
 trait TextAreaEditor extends Editor {
@@ -33,6 +38,7 @@ trait Options extends js.Object {
   val lineWrapping: UndefOr[Boolean]
   val mode: UndefOr[String | js.Object]
   val scrollbarStyle: UndefOr[String]
+  val scrollPastEnd: UndefOr[String]
   val showCursorWhenSelecting: UndefOr[Boolean]
   val smartIndent: UndefOr[Boolean]
   val tabindex: UndefOr[Int]
@@ -43,6 +49,8 @@ trait Options extends js.Object {
 
 trait Editor extends js.Object {
   def getDoc(): Document
+  def setOption(option: String, value: js.Any): Unit
+  def getOption(option: String): js.Any
   protected[codemirror] def on(t: String, f: js.Function): Unit
   
 }
