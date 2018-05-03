@@ -1,12 +1,27 @@
-lazy val webpackDir = Def.setting { (baseDirectory in ThisProject).value / "src" / "webpack" }
+
+lazy val baseSettings = Seq(
+  scalaVersion := "2.12.5",
+  scalacOptions ++= Seq(
+    "-deprecation",
+    "-encoding",
+    "UTF-8",
+    "-feature",
+    "-unchecked"
+  )
+)
+
+lazy val lib = project.in(file("lib"))
+  .settings(baseSettings)
+
+
+lazy val webpackDir = Def.setting { (sourceDirectory in ThisProject).value / "webpack" }
 lazy val webpackDevConf = Def.setting { Some(webpackDir.value / "webpack-dev.config.js") }
 lazy val webpackProdConf = Def.setting { Some(webpackDir.value / "webpack-prod.config.js") }
 
-lazy val demo = project.in(file("."))
-  .settings(
-    scalaVersion := "2.12.5",
+lazy val web = project.in(file("web"))
+  .settings(baseSettings)
+  .settings(  
     scalacOptions += "-P:scalajs:sjsDefinedByDefault",
-
     useYarn := true,
     version in webpack := "3.5.5",
     version in startWebpackDevServer := "2.7.1",

@@ -25,7 +25,7 @@ object Main {
     val isMac = window.navigator.userAgent.contains("Mac")
     val ctrl = if (isMac) "Cmd" else "Ctrl"
 
-    CodeMirror.keyMap.sublime.delete("Ctrl-L")
+    CodeMirror.keyMap.sublime -= "Ctrl-L"
 
     val darkTheme = "solarized dark"
     val lightTheme = "solarized light"
