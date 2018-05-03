@@ -1,6 +1,7 @@
 package codemirror
 
 import org.scalajs.dom.raw.{Event, Element, HTMLElement, HTMLTextAreaElement, KeyboardEvent}
+
 import scala.scalajs.js
 import js.annotation._
 import js.{Dictionary, RegExp, UndefOr, |}
@@ -17,6 +18,18 @@ object CodeMirror extends js.Object {
 @JSGlobal("Doc")
 class Document protected () extends js.Object {
   def setValue(content: String): Unit = js.native
+  def setSelection(anchor: Position,
+                   head: UndefOr[Position] = js.native,
+                   options: UndefOr[js.Object] = js.native): Unit = js.native
+  def posFromIndex(index: Int): Position = js.native
+  def indexFromPosition(pos: Position): Int = js.native
+}
+
+@js.native
+@JSGlobal("CodeMirror.Pos")
+class Position extends js.Object {
+  var line: Int = js.native
+  var ch: Int = js.native
 }
 
 trait KeyMaps extends js.Object {
@@ -51,6 +64,7 @@ trait Editor extends js.Object {
   def getDoc(): Document
   def setOption(option: String, value: js.Any): Unit
   def getOption(option: String): js.Any
+  def scrollIntoView(what: Position, margin: UndefOr[Int]): Unit
   protected[codemirror] def on(t: String, f: js.Function): Unit
   
 }

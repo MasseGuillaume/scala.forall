@@ -1,10 +1,12 @@
+import org.scalajs.dom.{document, console, window}
 import org.scalajs.dom.raw.HTMLTextAreaElement
+import org.scalajs.dom.ext.KeyCode
+
 import scala.scalajs.js
 
-import org.scalajs.dom.{document, console, window}
+import codemirror.{Position => CMPos, _}
 
-import codemirror._
-
+import scala.meta._
 
 object Main {
   def main(args: Array[String]): Unit = {
@@ -18,7 +20,7 @@ object Main {
 
     import EditorExtensions._
 
-    val code = Example.code
+    val code = Example.code2
 
     val isMac = window.navigator.userAgent.contains("Mac")
     val ctrl = if (isMac) "Cmd" else "Ctrl"
@@ -61,11 +63,83 @@ object Main {
         options
       )
 
+    val tree = code.parse[Source].get
+    val focus = new Focus(tree)
+
+    def setSel(pos: Pos): Unit = {
+      val doc = editor.getDoc()
+
+      val start = doc.posFromIndex(pos.start)
+      val end = doc.posFromIndex(pos.end)
+
+      doc.setSelection(start, end)
+      editor.scrollIntoView(start, 10)
+    }
+    setSel(focus.current)
+
     editor.onKeyDown((editor, keyEvent) => {
-      console.log(keyEvent)
-      // keyEvent.preventDefault()
+      val keyCode = keyEvent.keyCode
+      val pos = 
+        keyCode match {
+          case KeyCode.Down => 
+            keyEvent.preventDefault()
+            focus.down
+          case KeyCode.Up =>
+            keyEvent.preventDefault()
+            focus.up
+          case KeyCode.Left => 
+            keyEvent.preventDefault()
+            focus.left
+          case KeyCode.Right =>
+            keyEvent.preventDefault()
+            focus.right
+          case _ =>
+            focus.current
+        }
+      setSel(pos)
     })
 
     editor.getDoc().setValue(code)
+  }
+}
+
+case class Pos(start: Int, end: Int)
+
+class Focus(tree: Tree) {
+  private var parent = List(tree)
+  private var children = Vector(tree)
+  private var child = 0
+    
+  private def toPos(pos: Position): Pos = Pos(pos.start, pos.end)
+
+  def current: Pos = toPos(children(child).pos)
+
+  def down: Pos = {
+    parent = children(child) :: parent
+    if (children.nonEmpty) {
+      children = children(child).children.toVector
+      child = 0
+    }
+    current
+  }
+  def up: Pos = {
+    if (parent.size > 1) {
+      children = Vector(parent.head)
+      child = 0
+      parent = parent.tail
+    }
+    current
+  }
+  def left: Pos = {
+    if(child > 0) {
+      child -= 1
+    }
+    current
+  }
+  def right: Pos = {
+    if (child < children.size - 1) {
+      child += 1
+    }
+    current
   }
 }
