@@ -1,3 +1,4 @@
+import sbtcrossproject.{crossProject, CrossType}
 
 lazy val baseSettings = Seq(
   scalaVersion := "2.12.5",
@@ -7,12 +8,23 @@ lazy val baseSettings = Seq(
     "UTF-8",
     "-feature",
     "-unchecked"
-  )
+  ),
+  libraryDependencies ++= Seq(
+    "org.scalameta" %%% "scalameta" % "3.7.4",
+    "com.lihaoyi" %%% "utest" % "0.6.3" % Test,
+    "com.lihaoyi" %%% "fansi" % "0.2.5" % Test
+  ),
+  testFrameworks += new TestFramework("utest.runner.Framework")
 )
 
-lazy val lib = project.in(file("lib"))
+lazy val lib = crossProject(JSPlatform, JVMPlatform)
+  .withoutSuffixFor(JVMPlatform)
+  .crossType(CrossType.Pure)
+  .in(file("lib"))
   .settings(baseSettings)
 
+lazy val libJVM = lib.jvm
+lazy val libJS = lib.js
 
 lazy val webpackDir = Def.setting { (sourceDirectory in ThisProject).value / "webpack" }
 lazy val webpackDevConf = Def.setting { Some(webpackDir.value / "webpack-dev.config.js") }
@@ -33,8 +45,7 @@ lazy val web = project.in(file("web"))
     webpackBundlingMode in fastOptJS := BundlingMode.LibraryOnly(),
     webpackBundlingMode in fullOptJS := BundlingMode.Application,
     libraryDependencies ++= Seq(
-      "org.scala-js" %%% "scalajs-dom" % "0.9.5",
-      "org.scalameta" %%% "scalameta" % "3.7.4"
+      "org.scala-js" %%% "scalajs-dom" % "0.9.5"
     ),
     npmDependencies in Compile ++= Seq(
       "codemirror" -> "5.37.0",
@@ -57,4 +68,5 @@ lazy val web = project.in(file("web"))
     ),
     scalaJSUseMainModuleInitializer := true
   )
+  .dependsOn(libJS)
   .enablePlugins(ScalaJSPlugin, ScalaJSBundlerPlugin)
