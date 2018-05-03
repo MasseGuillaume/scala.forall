@@ -18,9 +18,8 @@ object CodeMirror extends js.Object {
 @JSGlobal("Doc")
 class Document protected () extends js.Object {
   def setValue(content: String): Unit = js.native
-  def setSelection(anchor: Position,
-                   head: UndefOr[Position] = js.native,
-                   options: UndefOr[js.Object] = js.native): Unit = js.native
+  def setCursor(pos: Position): Unit = js.native
+  def setSelection(start: Position, end: Position): Unit = js.native
   def posFromIndex(index: Int): Position = js.native
   def indexFromPosition(pos: Position): Int = js.native
 }
