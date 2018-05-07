@@ -38,33 +38,45 @@ case class Focus private(var parents: List[Tree], var children: Vector[Tree], va
     this
   }
   private def getChildren(tree: Tree): Vector[Tree] = {
-    def default = tree.children.toVector.filter(_.tokens.nonEmpty)
-    
-    tree.parent match {
-      case Some(parent) => {
-        tree match {          
-          case _: Term.Name => {
-            parent match {
-              case t: Defn.Object => t.templ.stats.toVector
-              case t: Pkg.Object => t.templ.stats.toVector
-              case _ => default
-            }
-          }
-          case _: Type.Name => {
-            parent match {
-              case t: Defn.Class => t.templ.stats.toVector
-              case t: Defn.Trait => t.templ.stats.toVector
-              case _ => default
-            }
-          }
-          case _: Term.Select => {
-            default
-          }
-          case _: Term.Apply => {
-            default
-          }
+    def default = childrens(tree)
+
+    def childrens(t: Tree): Vector[Tree] =
+      t.children.toVector.filter(_.tokens.nonEmpty)
+
+    val parent = parents.head
+
+    tree match {
+      case _: Term.Name => {
+        parent match {
+          case t: Defn.Def => Vector(t.body)
+          case t: Defn.Macro => Vector(t.body)
+          case t: Defn.Object => t.templ.stats.toVector
+          case t: Pkg.Object => t.templ.stats.toVector
           case _ => default
         }
+      }
+      case _: Pat.Var => {
+        parent match {
+          case t: Defn.Val =>
+            Vector(t.rhs)
+          case t: Defn.Var => 
+            t.rhs.map(Vector(_)).getOrElse(default)
+          case _ => default
+        }
+      }
+      case _: Type.Name => {
+        parent match {
+          case t: Defn.Class => t.templ.stats.toVector
+          case t: Defn.Trait => t.templ.stats.toVector
+          case t: Defn.Type => Vector(t.body)
+          case _ => default
+        }
+      }
+      case _: Term.Select => {
+        default
+      }
+      case _: Term.Apply => {
+        default
       }
       case _ => default
     }

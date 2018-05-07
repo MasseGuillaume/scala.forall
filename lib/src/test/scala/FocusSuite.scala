@@ -57,7 +57,7 @@ object FocusSuite extends FunSuite {
     doFocus(_.down.down.down, "class A", "class →A←")
   }
 
-  test("down on class name") {
+  test("shortcut class name to template") {
     doFocus(
       _.down.down.down,
       """|class B {
@@ -65,6 +65,18 @@ object FocusSuite extends FunSuite {
          |}""".stripMargin,
       """|class B {
          |  →val c = 1←
+         |}""".stripMargin,
+    )
+  }
+
+  test("shortcut val name to rhs") {
+    doFocus(
+      _.down.down.down.down.down,
+      """|class B {
+         |  var c = 1
+         |}""".stripMargin,
+      """|class B {
+         |  var c = →1←
          |}""".stripMargin,
     )
   }

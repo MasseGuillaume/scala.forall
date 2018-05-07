@@ -20,7 +20,7 @@ object Main {
 
     import EditorExtensions._
 
-    val code = Example.code3
+    val code = Example.code2
 
     val isMac = window.navigator.userAgent.contains("Mac")
     val ctrl = if (isMac) "Cmd" else "Ctrl"
@@ -63,7 +63,8 @@ object Main {
         options
       )
 
-    val tree = code.parse[Stat].get
+    editor.getDoc().setValue(code)
+    val tree = code.parse[Source].get
     val focus = Focus(tree)
 
     def setSel(pos: Pos): Unit = {
@@ -75,7 +76,7 @@ object Main {
       doc.setSelection(start, end)
       editor.scrollIntoView(start, 10)
     }
-    editor.getDoc().setValue(code)
+    
     setSel(focus.current)
 
     editor.onKeyDown((editor, keyEvent) => {
