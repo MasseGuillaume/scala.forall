@@ -245,8 +245,6 @@ class Focus(tree: Tree) {
 
 val code3 =
 """
-class B {
-  val c = 1
-}
+children(child).children.toVector
 """.trim
 }

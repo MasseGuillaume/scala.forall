@@ -38,20 +38,36 @@ case class Focus private(var parents: List[Tree], var children: Vector[Tree], va
     this
   }
   private def getChildren(tree: Tree): Vector[Tree] = {
-    tree match {
-      case _: Type.Name => {
-        val parent = tree.parent.get
-        println(parent.getClass)
-
-        parent match {
-          case cls: Defn.Class => cls.templ.stats.toVector
-          case _ => Vector()
+    def default = tree.children.toVector.filter(_.tokens.nonEmpty)
+    
+    tree.parent match {
+      case Some(parent) => {
+        tree match {          
+          case _: Term.Name => {
+            parent match {
+              case t: Defn.Object => t.templ.stats.toVector
+              case t: Pkg.Object => t.templ.stats.toVector
+              case _ => default
+            }
+          }
+          case _: Type.Name => {
+            parent match {
+              case t: Defn.Class => t.templ.stats.toVector
+              case t: Defn.Trait => t.templ.stats.toVector
+              case _ => default
+            }
+          }
+          case _: Term.Select => {
+            default
+          }
+          case _: Term.Apply => {
+            default
+          }
+          case _ => default
         }
       }
-      case _ => 
-        tree.children.toVector.filter(_.tokens.nonEmpty)
+      case _ => default
     }
-    
   }
 
   def left(): Focus = {

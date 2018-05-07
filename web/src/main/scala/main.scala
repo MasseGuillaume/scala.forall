@@ -63,7 +63,7 @@ object Main {
         options
       )
 
-    val tree = code.parse[Source].get
+    val tree = code.parse[Stat].get
     val focus = Focus(tree)
 
     def setSel(pos: Pos): Unit = {
@@ -75,6 +75,7 @@ object Main {
       doc.setSelection(start, end)
       editor.scrollIntoView(start, 10)
     }
+    editor.getDoc().setValue(code)
     setSel(focus.current)
 
     editor.onKeyDown((editor, keyEvent) => {
@@ -101,6 +102,6 @@ object Main {
       setSel(pos)
     })
 
-    editor.getDoc().setValue(code)
+    
   }
 }

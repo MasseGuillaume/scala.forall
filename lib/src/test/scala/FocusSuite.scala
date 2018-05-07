@@ -68,6 +68,14 @@ object FocusSuite extends FunSuite {
          |}""".stripMargin,
     )
   }
+
+  // test("selects chains in-order") {
+  //   doFocus(
+  //     _.
+  //     "a.b.c",
+  //     "a.b.c"
+  //   )
+  // }
   
   private val nl = "\n"
   private def noop: Focus => Unit = _ => ()
