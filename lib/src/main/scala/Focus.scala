@@ -17,12 +17,11 @@ case class Focus private(var parents: List[Tree], var children: Vector[Tree], va
 
   def down(): Focus = {
     val currentParent = children(child.head)
-    if (getChildren(currentParent).nonEmpty) {
+    val newChildrens = getChildren(currentParent)
+    if (newChildrens.nonEmpty) {
       parents = currentParent :: parents
       child = 0 :: child
-      children = getChildren(currentParent)
-
-      
+      children = newChildrens
     }
     this
   }
@@ -39,7 +38,20 @@ case class Focus private(var parents: List[Tree], var children: Vector[Tree], va
     this
   }
   private def getChildren(tree: Tree): Vector[Tree] = {
-    tree.children.toVector.filter(_.tokens.nonEmpty)
+    tree match {
+      case _: Type.Name => {
+        val parent = tree.parent.get
+        println(parent.getClass)
+
+        parent match {
+          case cls: Defn.Class => cls.templ.stats.toVector
+          case _ => Vector()
+        }
+      }
+      case _ => 
+        tree.children.toVector.filter(_.tokens.nonEmpty)
+    }
+    
   }
 
   def left(): Focus = {

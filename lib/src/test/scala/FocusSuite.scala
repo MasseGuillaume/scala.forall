@@ -56,19 +56,41 @@ object FocusSuite extends FunSuite {
   test("no children") {
     doFocus(_.down.down.down, "class A", "class →A←")
   }
+
+  test("down on class name") {
+    doFocus(
+      _.down.down.down,
+      """|class B {
+         |  val c = 1
+         |}""".stripMargin,
+      """|class B {
+         |  →val c = 1←
+         |}""".stripMargin,
+    )
+  }
   
+  private val nl = "\n"
   private def noop: Focus => Unit = _ => ()
   private def doFocus(f: Focus => Unit, code: String, annotedSource: String): Unit = {
-    println(code)
     val tree = code.parse[Source].get
     val focus = Focus(tree)
     f(focus)
     val obtained = focus.current
     val expected = selection(annotedSource)
-    assert(obtained == expected)
+
+    val fCode = fansi.Str(code)
+    val fObtained = fCode.overlay(fansi.Color.Red, obtained.start, obtained.end)
+    val fExpected = fCode.overlay(fansi.Color.Green, expected.start, expected.end)
+
+    val diff = nl + fObtained + nl + fExpected
+
+    if(obtained != expected) {
+      println(diff)
+      throw new Exception("assertion failed")
+    }
   }
   private def selection(annotedSource: String): Pos = {
-    val nl = "\n"
+    
     val startMarker = '→'
     val stopMarker = '←'
 

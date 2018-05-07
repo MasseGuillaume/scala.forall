@@ -245,7 +245,6 @@ class Focus(tree: Tree) {
 
 val code3 =
 """
-class A
 class B {
   val c = 1
 }
