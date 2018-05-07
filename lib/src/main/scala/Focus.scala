@@ -2,56 +2,56 @@ import scala.meta._
 
 case class Pos(start: Int, end: Int)
 
-class Focus(tree: Tree) {
-  private var parent = List(tree)
-  private var children = Vector(tree)
-  private var child = List(0)
-    
+object Focus {
+  def apply(tree: Tree): Focus = {
+    new Focus(parents = List(tree), children = Vector(tree), child = List(0))
+  }
+}
+
+case class Focus private(var parents: List[Tree], var children: Vector[Tree], var child: List[Int]) {
+
   private def toPos(pos: Position): Pos = Pos(pos.start, pos.end)
 
-  def current: Pos = toPos(children(child.head).pos)
+  def current: Pos = 
+    toPos(children(child.head).pos)
 
-  def down: Pos = {
-    if (children.nonEmpty) {
-      parent = children(child.head) :: parent
-      children = children(child.head).children.toVector
+  def down(): Focus = {
+    val currentParent = children(child.head)
+    if (getChildren(currentParent).nonEmpty) {
+      parents = currentParent :: parents
       child = 0 :: child
+      children = getChildren(currentParent)
+
+      
     }
-    current
+    this
   }
-  def up: Pos = {
-    if (parent.size > 1) {
-      parent = parent.tail
-      children = Vector(parent.head)
+  private def showPos(tree: Tree): (Int, Int) = {
+    (tree.pos.start, tree.pos.end)
+  }
+  def up(): Focus = {
+    if (parents.size > 1) {
+      parents = parents.tail
+      val currentParent = parents.head
       child = child.tail
+      children = getChildren(currentParent)
     }
-    current
+    this
   }
-  def left: Pos = {
+  private def getChildren(tree: Tree): Vector[Tree] = {
+    tree.children.toVector.filter(_.tokens.nonEmpty)
+  }
+
+  def left(): Focus = {
     if(child.head > 0) {
       child = (child.head - 1) :: child.tail
     }
-    current
+    this
   }
-  def right: Pos = {
+  def right(): Focus = {
     if (child.head < children.size - 1) {
       child = (child.head + 1) :: child.tail
     }
-    current
+    this
   }
-
-  // def find(tree: Tree, offset: Offset): Option[Tree] = {
-  //   var found: Option[Tree] = None
-  //   object findPos extends Traverser {
-  //     override def apply(tree: Tree): Unit = {
-  //       if (tree.pos.start <= offset.value &&
-  //           offset.value <= tree.pos.end) {
-  //         found = Some(tree)
-  //         super.apply(tree)
-  //       }
-  //     }
-  //   }
-  //   findPos(tree)
-  //   found
-  // }
 }

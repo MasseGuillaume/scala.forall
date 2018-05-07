@@ -20,7 +20,7 @@ object Main {
 
     import EditorExtensions._
 
-    val code = Example.code2
+    val code = Example.code3
 
     val isMac = window.navigator.userAgent.contains("Mac")
     val ctrl = if (isMac) "Cmd" else "Ctrl"
@@ -64,7 +64,7 @@ object Main {
       )
 
     val tree = code.parse[Source].get
-    val focus = new Focus(tree)
+    val focus = Focus(tree)
 
     def setSel(pos: Pos): Unit = {
       val doc = editor.getDoc()
@@ -79,23 +79,25 @@ object Main {
 
     editor.onKeyDown((editor, keyEvent) => {
       val keyCode = keyEvent.keyCode
-      val pos = 
-        keyCode match {
-          case KeyCode.Down => 
-            keyEvent.preventDefault()
-            focus.down
-          case KeyCode.Up =>
-            keyEvent.preventDefault()
-            focus.up
-          case KeyCode.Left => 
-            keyEvent.preventDefault()
-            focus.left
-          case KeyCode.Right =>
-            keyEvent.preventDefault()
-            focus.right
-          case _ =>
-            focus.current
-        }
+      val oldFocus = focus
+      keyCode match {
+        case KeyCode.Down => 
+          focus.down()
+        case KeyCode.Up =>
+          focus.up()
+        case KeyCode.Left => 
+          focus.left()
+        case KeyCode.Right =>
+          focus.right()
+        case _ =>
+          focus
+      }
+
+      val handled = focus != oldFocus
+      // if (handled) 
+      keyEvent.preventDefault()
+
+      val pos = focus.current
       setSel(pos)
     })
 
